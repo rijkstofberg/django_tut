@@ -81,6 +81,7 @@ celerybeat-schedule
 # virtualenv
 venv/
 ENV/
+ve/
 
 # Spyder project settings
 .spyderproject
@@ -89,4 +90,9 @@ ENV/
 .ropeproject
 
 # git time management
-/.gtm/
+.gtm/
+
+# Pycharm housekeeping files
+.idea
+
+*.sqlite3

@@ -1,34 +1,40 @@
+from django.utils import timezone
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
-from django.template import loader
+from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.views import generic
 
 from .models import Question, Choice
 
 
-def index(request):
-    questions = Question.objects.order_by('-pub_date')
-    template = loader.get_template('mysite/index.html')
-    context = {
-        'latest_question_list': questions,
-    }
-    return render(request, 'mysite/index.html', context)
+class IndexView(generic.ListView):
+    template_name = 'mysite/index.html'
+    context_object_name = 'latest_question_list'
+
+    def get_queryset(self):
+        return Question.objects.filter(
+            pub_date__lte=timezone.now()
+        ).order_by('-pub_date')[:5]
 
 
-def detail(request, question_id):
-    question = get_object_or_404(Question, pk=question_id)
-    context = {
-        'question': question,
-    }
-    return render(request, 'mysite/detail.html', context)
+class DetailView(generic.DetailView):
+    model = Question
+    template_name = 'mysite/detail.html'
+
+    def get_queryset(self):
+        return Question.objects.filter(
+            pub_date__lte=timezone.now()
+        )
 
 
-def results(request, question_id):
-    question = get_object_or_404(Question, pk=question_id)
-    context = {
-        'question': question,
-    }
-    return render(request, 'mysite/results.html', context)
+class ResultsView(generic.DetailView):
+    model = Question
+    template_name = 'mysite/results.html'
+
+    def get_queryset(self):
+        return Question.objects.filter(
+            pub_date__lte=timezone.now()
+        )
 
 
 def vote(request, question_id):
